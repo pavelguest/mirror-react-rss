@@ -1,0 +1,22 @@
+.App {
+  text-align: center;
+}
+.App-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  background-color: #282c34;
+}
+.header__nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  column-gap: 20px;
+}
+.App-link {
+  color: #61dafb;
+}
