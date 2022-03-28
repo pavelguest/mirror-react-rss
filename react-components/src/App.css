@@ -17,6 +17,32 @@
   height: 100%;
   column-gap: 20px;
 }
-.App-link {
-  color: #61dafb;
+.nav__link {
+  width: 150px;
+  padding: 5px;
+  font-size: 20px;
+  color: #79daf5;
+  text-decoration: none;
+  box-shadow: 1px 1px 10px 1px #000a;
+}
+.nav__link:hover {
+  color: #00c5fc;
+}
+.active {
+  background-color: rgb(68, 24, 24);
+}
+.App-main {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  row-gap: 10px;
+}
+.Cards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+
+  gap: 10px 10px;
 }

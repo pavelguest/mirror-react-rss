@@ -1,0 +1,9 @@
+#header-search {
+  width: 300px;
+  padding: 8px;
+  border: 2px solid salmon;
+  box-shadow: 1px 1px 10px 1px #000a;
+}
+#header-search:focus {
+  outline: none;
+}

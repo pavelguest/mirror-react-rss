@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, NavLink } from 'react-router-dom';
 import './App.css';
 import { AboutUsPage } from './Pages/AboutUsPage';
 import { NotFoundPage } from './Pages/NotFoundPage';
@@ -12,9 +12,24 @@ class App extends Component {
         <div className="App">
           <header className="App-header">
             <nav className="header__nav">
-              <Link to="/">Home</Link>
-              <Link to="/about">About</Link>
-              <Link to="/404">404</Link>
+              <NavLink
+                to="/"
+                className={({ isActive }) => 'nav__link' + (isActive ? ' active' : '')}
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to="/about"
+                className={({ isActive }) => 'nav__link' + (isActive ? ' active' : '')}
+              >
+                About Us
+              </NavLink>
+              <NavLink
+                to="/404"
+                className={({ isActive }) => 'nav__link' + (isActive ? ' active' : '')}
+              >
+                404
+              </NavLink>
             </nav>
           </header>
           <main className="App-main">

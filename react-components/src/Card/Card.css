@@ -1,0 +1,30 @@
+.Card {
+  position: relative;
+  width: 200px;
+  padding: 10px;
+  box-shadow: 2px 2px 20px 2px #000a;
+}
+.Card__img {
+  width: 180px;
+  height: 250px;
+  box-shadow: 1px 1px 10px 1px #000a;
+}
+.Card__rating {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  column-gap: 5px;
+}
+
+.rating__text {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+}
+.rating__text:nth-child(1) {
+  background-color: rgb(0, 255, 106);
+}
+.rating__text:nth-child(2) {
+  background-color: rgb(229, 255, 0);
+}
