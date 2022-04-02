@@ -1,7 +1,7 @@
 import React from 'react';
 import './Card.css';
 
-interface ICard {
+export interface ICard {
   name: string | null;
   year: number;
   posterUrlPreview: string;

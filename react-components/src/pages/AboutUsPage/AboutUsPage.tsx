@@ -1,8 +1,8 @@
 import React from 'react';
-
+import './AboutUsPage.css';
 const AboutUsPage = () => (
   <div>
-    <p>About Us</p>
+    <p className="red">About Us</p>
   </div>
 );
 

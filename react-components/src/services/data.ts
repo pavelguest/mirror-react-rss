@@ -1,4 +1,5 @@
 interface IData {
+  id: string;
   nameRu: string | null;
   ratingKinopoisk: number | null;
   ratingImdb: number | null;
@@ -9,6 +10,7 @@ interface IData {
 
 const data: IData[] = [
   {
+    id: '0',
     nameRu: 'Космос',
     ratingKinopoisk: 9.3,
     ratingImdb: null,
@@ -17,6 +19,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/1309325.jpg',
   },
   {
+    id: '1',
     nameRu: 'Планета Земля 2',
     ratingKinopoisk: 9.2,
     ratingImdb: 9.5,
@@ -25,6 +28,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/1007472.jpg',
   },
   {
+    id: '2',
     nameRu: 'Друзья',
     ratingKinopoisk: 9.2,
     ratingImdb: 9,
@@ -33,6 +37,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/77044.jpg',
   },
   {
+    id: '3',
     nameRu: 'Жил-был пёс',
     ratingKinopoisk: 9.2,
     ratingImdb: 8.4,
@@ -41,6 +46,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/45319.jpg',
   },
   {
+    id: '4',
     nameRu: 'Гамильтон',
     ratingKinopoisk: 9.2,
     ratingImdb: null,
@@ -49,6 +55,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/1003587.jpg',
   },
   {
+    id: '5',
     nameRu: 'Счастливые люди',
     ratingKinopoisk: 9.2,
     ratingImdb: 8.8,
@@ -57,6 +64,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/674243.jpg',
   },
   {
+    id: '6',
     nameRu: 'Побег из Шоушенка',
     ratingKinopoisk: 9.1,
     ratingImdb: 9.3,
@@ -65,6 +73,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/326.jpg',
   },
   {
+    id: '7',
     nameRu: 'Зеленая миля',
     ratingKinopoisk: 9.1,
     ratingImdb: 8.6,
@@ -73,6 +82,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/435.jpg',
   },
   {
+    id: '8',
     nameRu: 'Малышарики',
     ratingKinopoisk: 9.1,
     ratingImdb: 7.3,
@@ -81,6 +91,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/988056.jpg',
   },
   {
+    id: '9',
     nameRu: 'Говорящий Том и друзья',
     ratingKinopoisk: 9.1,
     ratingImdb: 6.2,
@@ -89,6 +100,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/1189947.jpg',
   },
   {
+    id: '10',
     nameRu: 'Бойцовский клуб',
     ratingKinopoisk: 8.6,
     ratingImdb: 8.8,
@@ -97,6 +109,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/361.jpg',
   },
   {
+    id: '11',
     nameRu: 'Властелин колец: Возвращение короля',
     ratingKinopoisk: 8.6,
     ratingImdb: 8.9,
@@ -105,6 +118,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/3498.jpg',
   },
   {
+    id: '12',
     nameRu: 'Клаус',
     ratingKinopoisk: 8.6,
     ratingImdb: 8.2,
@@ -113,6 +127,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/957887.jpg',
   },
   {
+    id: '13',
     nameRu: 'Гамлет',
     ratingKinopoisk: 8.6,
     ratingImdb: 8.1,
@@ -121,6 +136,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/474867.jpg',
   },
   {
+    id: '14',
     nameRu: 'Трамвай «Желание»',
     ratingKinopoisk: 8.6,
     ratingImdb: null,
@@ -129,6 +145,7 @@ const data: IData[] = [
     posterUrlPreview: 'https://kinopoiskapiunofficial.tech/images/posters/kp_small/843290.jpg',
   },
   {
+    id: '15',
     nameRu: 'Фландрийский пёс',
     ratingKinopoisk: 8.6,
     ratingImdb: 7.7,
