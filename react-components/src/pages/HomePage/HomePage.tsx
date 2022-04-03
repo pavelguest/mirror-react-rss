@@ -42,7 +42,7 @@ class HomePage extends Component {
             this.changeInputValue.bind(this)(value);
           }}
         />
-        <div className="Cards">
+        <div className="Cards" data-testid="test">
           {this.state.filterMovies.map((movie) => (
             <Card
               key={movie.id}
