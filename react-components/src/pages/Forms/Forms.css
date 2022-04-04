@@ -1,0 +1,43 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 300px;
+  padding: 20px;
+  box-shadow: 1px 1px 10px 1px #000a;
+
+  gap: 20px;
+}
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#input-name,
+#input-date,
+#select-countries {
+  display: flex;
+  align-items: center;
+  width: 260px;
+  height: 45px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
+  color: #030303;
+  border: 1px solid #030303;
+}
+#submit {
+  align-self: center;
+  width: 200px;
+  height: 45px;
+  border: 1px solid #030303;
+}
+#input-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #030303;
+}

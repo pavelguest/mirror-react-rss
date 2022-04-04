@@ -4,6 +4,7 @@ import './App.css';
 import AboutUsPage from './pages/AboutUsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import HomePage from './pages/HomePage';
+import Forms from './pages/Forms';
 
 const App = () => (
   <>
@@ -20,6 +21,12 @@ const App = () => (
             About Us
           </NavLink>
           <NavLink
+            to="/forms"
+            className={({ isActive }) => 'nav__link' + (isActive ? ' active' : '')}
+          >
+            Forms
+          </NavLink>
+          <NavLink
             to="/404"
             className={({ isActive }) => 'nav__link' + (isActive ? ' active' : '')}
           >
@@ -31,6 +38,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/forms" element={<Forms />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
