@@ -4,7 +4,7 @@ import './App.css';
 import AboutUsPage from './pages/AboutUsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import HomePage from './pages/HomePage';
-import Forms from './pages/Forms';
+import FormPage from './pages/FormPage';
 
 const App = () => (
   <>
@@ -38,7 +38,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/forms" element={<Forms />} />
+          <Route path="/forms" element={<FormPage />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
