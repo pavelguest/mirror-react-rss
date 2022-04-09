@@ -9,6 +9,7 @@ export interface ICardForForm {
   date: string | undefined;
   country: string | undefined;
   urlImage: string | undefined;
+  isRight: string | undefined;
 }
 interface FormState {
   formData: ICardForForm[];
@@ -23,6 +24,7 @@ class Forms extends Component<IProps, FormState> {
   inputDate: React.RefObject<HTMLInputElement>;
   select: React.RefObject<HTMLSelectElement>;
   form: React.RefObject<HTMLFormElement>;
+  checkboxTwo: React.RefObject<HTMLInputElement>;
   constructor(props: IProps) {
     super(props);
     this.inputName = React.createRef();
@@ -30,6 +32,7 @@ class Forms extends Component<IProps, FormState> {
     this.select = React.createRef();
     this.inputImg = React.createRef();
     this.checkbox = React.createRef();
+    this.checkboxTwo = React.createRef();
     this.form = React.createRef();
     this.state = {
       formData: [],
@@ -37,6 +40,28 @@ class Forms extends Component<IProps, FormState> {
       formValid: true,
     };
   }
+  handleError() {
+    if (
+      !this.inputName.current?.checkValidity() ||
+      !this.inputDate.current?.checkValidity() ||
+      !this.inputImg.current?.checkValidity() ||
+      !this.select.current?.checkValidity() ||
+      !this.checkbox.current?.checkValidity()
+    ) {
+      this.disableButton();
+    }
+  }
+  inputHandler = () => {
+    (this.inputName.current && this.inputName.current.value.length > 0) ||
+    (this.inputDate.current && this.inputDate.current.value.length > 0) ||
+    (this.select.current && this.select.current.value.length > 0) ||
+    (this.inputImg.current && this.inputImg.current.value.length > 0) ||
+    (this.checkbox.current && this.checkbox.current.checked)
+      ? this.activateButton()
+      : this.disableButton();
+  };
+  disableButton = () => this.setState({ isDisabled: true });
+  activateButton = () => this.setState({ isDisabled: false });
   addCard(newCard: ICardForForm) {
     this.setState({
       formData: this.state.formData.concat(newCard),
@@ -49,29 +74,62 @@ class Forms extends Component<IProps, FormState> {
       date: this.inputDate.current?.value,
       country: this.select.current?.value,
       urlImage: URL.createObjectURL(this.inputImg.current?.files?.[0] as Blob),
+      isRight: this.checkboxTwo.current?.value,
     });
     this.resetForm();
   }
   resetForm() {
     this.form.current?.reset();
+    this.disableButton();
   }
   render() {
     return (
       <div className="form__wrapper">
-        <form className="form-container" onSubmit={this.handleSubmit.bind(this)} ref={this.form}>
+        <form
+          className="form-container"
+          onSubmit={this.handleSubmit.bind(this)}
+          ref={this.form}
+          data-testid="form"
+        >
           <label className="label" htmlFor="input-name">
             <div>Name: *</div>
-            <input id="input-name" type="text" placeholder="Enter name..." ref={this.inputName} />
+            <input
+              id="input-name"
+              type="text"
+              placeholder="Enter name..."
+              ref={this.inputName}
+              onChange={this.inputHandler}
+              minLength={3}
+              onInvalid={this.handleError}
+              data-testid="input-name"
+              required
+            />
           </label>
           <label className="label" htmlFor="input-date">
             <div>Date: *</div>
 
-            <input id="input-date" type="date" ref={this.inputDate} />
+            <input
+              id="input-date"
+              type="date"
+              ref={this.inputDate}
+              onChange={this.inputHandler}
+              onInvalid={this.handleError}
+              data-testid="input-data"
+              required
+            />
           </label>
           <label className="label" htmlFor="select-countries">
             <div>Select countries: *</div>
-            <select name="countries" id="select-countries" ref={this.select}>
-              <option defaultValue="USA">USA</option>
+            <select
+              name="countries"
+              id="select-countries"
+              ref={this.select}
+              onChange={this.inputHandler}
+              onInvalid={this.handleError}
+              data-testid="input-select"
+              required
+            >
+              <option value="USA">USA</option>
               <option value="CHINA">CHINA</option>
               <option value="MEXICO">MEXICO</option>
             </select>
@@ -79,17 +137,40 @@ class Forms extends Component<IProps, FormState> {
           <label className="label" htmlFor="input-file">
             {' '}
             *
-            <input type="file" id="input-file" ref={this.inputImg} />
+            <input
+              type="file"
+              id="input-file"
+              ref={this.inputImg}
+              onChange={this.inputHandler}
+              required
+              onInvalid={this.handleError}
+              data-testid="input-file"
+            />
           </label>
-          <label className="label" htmlFor="input-radio">
-            <div>Согласен получать уведомления</div>
-            <input type="radio" id="input-radio" />
+          <div>Согласен получать уведомления</div>
+          <label className="checkbox-green">
+            <input type="checkbox" ref={this.checkboxTwo} data-testid="input-radio" />
+            <span className="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span>
           </label>
+
           <label className="label" htmlFor="input-checkbox">
             <div>Согласен на обработку данных *</div>
-            <input type="checkbox" id="input-checkbox" ref={this.checkbox} />
+            <input
+              type="checkbox"
+              id="input-checkbox"
+              ref={this.checkbox}
+              onChange={this.inputHandler}
+              onInvalid={this.handleError}
+              data-testid="input-agreement"
+              required
+            />
           </label>
-          <input type="submit" id="submit" />
+          <input
+            type="submit"
+            id="submit"
+            disabled={this.state.isDisabled}
+            data-testid="input-text"
+          />
         </form>
         <div className="form-container__card">
           {this.state.formData.map((card, index) => (
@@ -99,6 +180,7 @@ class Forms extends Component<IProps, FormState> {
               date={card.date}
               country={card.country}
               urlImage={card.urlImage}
+              isRight={card.isRight}
             />
           ))}
         </div>
