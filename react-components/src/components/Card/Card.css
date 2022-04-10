@@ -1,6 +1,7 @@
 .Card {
   position: relative;
   width: 200px;
+  height: 400px;
   padding: 10px;
   box-shadow: 2px 2px 20px 2px #000a;
 }
