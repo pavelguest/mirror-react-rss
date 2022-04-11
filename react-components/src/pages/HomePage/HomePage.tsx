@@ -4,6 +4,8 @@ import SearchBar from '../../components/SearchBar';
 import { ICArdMovie } from '../../components/Card/Card';
 import './HomePage.css';
 import Preload from '../../components/Preload';
+import CardForApi from '../../components/CardForApi';
+import { ModifierFlags } from 'typescript';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IPropsPage {}
@@ -11,6 +13,8 @@ interface IState {
   filterMovies: ICArdMovie[] | [];
   searchBarValue: string;
   loading: boolean;
+  modalWindow: boolean;
+  currentMovie: ICArdMovie;
 }
 
 class HomePage extends Component<IPropsPage, IState> {
@@ -22,6 +26,8 @@ class HomePage extends Component<IPropsPage, IState> {
       filterMovies: [],
       searchBarValue: localStorage.getItem('searchValue') || '',
       loading: false,
+      modalWindow: false,
+      currentMovie: {},
     };
   }
   async getData() {
@@ -45,6 +51,9 @@ class HomePage extends Component<IPropsPage, IState> {
 
   componentWillUnmount() {
     localStorage.setItem('searchValue', this.state.searchBarValue);
+  }
+  closeWindow() {
+    this.setState({ modalWindow: false });
   }
   render() {
     return (
@@ -77,10 +86,18 @@ class HomePage extends Component<IPropsPage, IState> {
                 ratingKinopoisk={movie.ratingKinopoisk}
                 type={movie.type}
                 year={movie.year}
+                openCard={() => {
+                  this.setState({ currentMovie: { ...movie }, modalWindow: true });
+                }}
               />
             ))
           )}
         </div>
+        <CardForApi
+          modalWindow={this.state.modalWindow}
+          currentMovie={this.state.currentMovie}
+          closeWindow={() => this.closeWindow()}
+        />
       </>
     );
   }

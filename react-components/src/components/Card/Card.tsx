@@ -1,11 +1,12 @@
 import React from 'react';
+import CardForApi from '../CardForApi';
 import './Card.css';
 
 interface IMovieCountries {
-  countries: string;
+  country: string;
 }
 interface IMovieGenres {
-  genres: string;
+  genre: string;
 }
 export interface ICArdMovie {
   countries?: IMovieCountries[];
@@ -21,10 +22,11 @@ export interface ICArdMovie {
   ratingKinopoisk?: number | null;
   type?: string;
   year?: number;
+  openCard?: () => void;
 }
 
 const Card = (props: ICArdMovie) => (
-  <div className="Card">
+  <div className="Card" onClick={props.openCard}>
     <img className="Card__img" src={props.posterUrlPreview} alt="movie" />
     <p>{props.nameRu}</p>
     <p>{props.year}</p>
