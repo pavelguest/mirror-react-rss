@@ -6,6 +6,7 @@ import './HomePage.css';
 import Preload from '../../components/Preload';
 import CardForApi from '../../components/CardForApi';
 import { ModifierFlags } from 'typescript';
+import axios from 'axios';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IPropsPage {}
@@ -32,15 +33,13 @@ class HomePage extends Component<IPropsPage, IState> {
   }
   async getData() {
     this.setState({ loading: true });
-    const response = await fetch(
+    const response = await axios.get(
       `https://kinopoiskapiunofficial.tech/api/v2.2/films/?type=FILM&ratingFrom=0&ratingTo=10&yearFrom=2000&yearTo=3000&keyword=${this.state.searchBarValue}`,
       {
-        method: 'GET',
         headers: { 'X-API-KEY': `${this.apiKey}`, 'Content-Type': 'application/json' },
       }
     );
-    const data = await response.json();
-    console.log(data.items);
+    const data = await response.data;
     this.setState({ filterMovies: [...data.items], loading: false });
   }
   changeInputValue(value: string) {

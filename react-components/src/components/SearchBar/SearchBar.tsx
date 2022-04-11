@@ -20,7 +20,6 @@ const SearchBar: FunctionComponent<ISearchBar> = ({
         onChange={(event) => changeInputValue(event.target.value)}
         onKeyUp={(event) => {
           if (event.keyCode === 13) {
-            console.log(`2222`);
             getData();
           }
         }}
@@ -28,6 +27,7 @@ const SearchBar: FunctionComponent<ISearchBar> = ({
         id="header-search"
         placeholder="Enter..."
         name="s"
+        data-testid="search-input"
       />
     </div>
   );
