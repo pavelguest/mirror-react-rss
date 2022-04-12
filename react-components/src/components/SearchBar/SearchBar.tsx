@@ -29,6 +29,9 @@ const SearchBar: FunctionComponent<ISearchBar> = ({
         name="s"
         data-testid="search-input"
       />
+      <button className="button__search" onClick={getData} data-testid="search-button">
+        search
+      </button>
     </div>
   );
 };

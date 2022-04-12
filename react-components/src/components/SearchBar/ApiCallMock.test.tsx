@@ -1,9 +1,9 @@
 import axios from 'axios';
-import HomePage from '../pages/HomePage';
+import HomePage from '../../pages/HomePage';
 import { render } from '@testing-library/react';
 import { screen } from '@testing-library/react';
 import { fireEvent } from '@testing-library/react';
-import { ICArdMovie } from '../components/Card/Card';
+import { ICArdMovie } from '../Card/Card';
 jest.mock('axios');
 
 type responseType = {
@@ -35,8 +35,9 @@ describe('getdata', () => {
     (axios.get as jest.Mock).mockResolvedValue(response);
     render(<HomePage />);
     const searchInput = screen.getByTestId('search-input');
-    fireEvent.change(searchInput, { target: { value: 'миля' } });
-    fireEvent.keyUp(searchInput, { key: 'Enter', charCode: 13 });
+    const searchButton = screen.getByTestId('search-button');
+    fireEvent.change(searchInput, { target: { value: 'паук' } });
+    fireEvent.click(searchButton);
     expect(axios.get).toBeCalledTimes(1);
   });
 });

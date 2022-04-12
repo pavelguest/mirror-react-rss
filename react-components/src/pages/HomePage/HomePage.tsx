@@ -39,13 +39,16 @@ class HomePage extends Component<IPropsPage, IState> {
         headers: { 'X-API-KEY': `${this.apiKey}`, 'Content-Type': 'application/json' },
       }
     );
-    const data = await response.data;
-    this.setState({ filterMovies: [...data.items], loading: false });
+    try {
+      const data = await response.data;
+      this.setState({ filterMovies: [...data.items], loading: false });
+    } catch {
+      console.log('error');
+    }
   }
   changeInputValue(value: string) {
     const searchValue = value;
     this.setState({ searchBarValue: searchValue });
-    console.log(searchValue);
   }
 
   componentWillUnmount() {
