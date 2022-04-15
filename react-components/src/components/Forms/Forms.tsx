@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { isEmptyBindingElement } from 'typescript';
 import CardForForm from '../CardForForm';
 import './Forms.css';
 
@@ -7,80 +8,151 @@ interface IProps {}
 export interface ICardForForm {
   name: string | undefined;
   date: string | undefined;
-  country: string | undefined;
-  urlImage: string | undefined;
-  isRight: string | undefined;
+  country?: string | undefined;
+  file: string | undefined;
+  isRight?: string | undefined;
 }
 interface FormState {
-  formData: ICardForForm[];
+  formCards: ICardForForm[];
   isDisabled: boolean;
-  formValid: boolean;
+  firstChangeForm: boolean;
+  name: boolean;
+  date: boolean;
+  file: boolean;
+  country: boolean;
+  agree: boolean;
 }
 
+interface FormError {
+  name: string;
+  date: string;
+  file: string;
+  country: string;
+  agree: string;
+}
+type StateKeys = 'name' | 'date' | 'country' | 'file' | 'agree';
 class Forms extends Component<IProps, FormState> {
   checkbox: React.RefObject<HTMLInputElement>;
-  inputImg: React.RefObject<HTMLInputElement>;
+  inputFile: React.RefObject<HTMLInputElement>;
   inputName: React.RefObject<HTMLInputElement>;
   inputDate: React.RefObject<HTMLInputElement>;
   select: React.RefObject<HTMLSelectElement>;
   form: React.RefObject<HTMLFormElement>;
   checkboxTwo: React.RefObject<HTMLInputElement>;
+  formErrors: FormError;
+
   constructor(props: IProps) {
     super(props);
     this.inputName = React.createRef();
     this.inputDate = React.createRef();
     this.select = React.createRef();
-    this.inputImg = React.createRef();
+    this.inputFile = React.createRef();
     this.checkbox = React.createRef();
     this.checkboxTwo = React.createRef();
     this.form = React.createRef();
     this.state = {
-      formData: [],
+      formCards: [],
       isDisabled: true,
-      formValid: true,
+      firstChangeForm: false,
+      name: true,
+      date: true,
+      file: true,
+      country: true,
+      agree: true,
+    };
+    this.formErrors = {
+      name: 'Поле `Имя` должно быть больше 3-ех букв',
+      date: 'Поле `Дата` не должно быть пустым',
+      file: 'Поле `Файл` не должно быть пустым',
+      country: 'Нужно выбрать страну',
+      agree: 'Нужно согласие',
     };
   }
-  handleError() {
-    if (
-      !this.inputName.current?.checkValidity() ||
-      !this.inputDate.current?.checkValidity() ||
-      !this.inputImg.current?.checkValidity() ||
-      !this.select.current?.checkValidity() ||
-      !this.checkbox.current?.checkValidity()
-    ) {
-      this.disableButton();
-    }
+  resetForm() {
+    this.form.current?.reset();
+    this.setState({ isDisabled: true });
   }
-  inputHandler = () => {
-    (this.inputName.current && this.inputName.current.value.length > 0) ||
-    (this.inputDate.current && this.inputDate.current.value.length > 0) ||
-    (this.select.current && this.select.current.value.length > 0) ||
-    (this.inputImg.current && this.inputImg.current.value.length > 0) ||
-    (this.checkbox.current && this.checkbox.current.checked)
-      ? this.activateButton()
-      : this.disableButton();
+  onChangeHandler = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const name = e.target.name as StateKeys;
+    this.setState((prevState) => {
+      return { ...prevState, [name]: true };
+    }, this.enableButton);
+
+    if (!this.state.firstChangeForm) {
+      this.setState({ isDisabled: false });
+    }
   };
-  disableButton = () => this.setState({ isDisabled: true });
-  activateButton = () => this.setState({ isDisabled: false });
+
+  enableButton = () => {
+    if (
+      this.state.country &&
+      this.state.agree &&
+      this.state.date &&
+      this.state.file &&
+      this.state.name &&
+      this.state.firstChangeForm
+    ) {
+      this.setState((prevState) => {
+        return { ...prevState, isDisabled: false };
+      });
+    }
+  };
+  isValidComponent = (condition: boolean, stateKey: StateKeys): boolean => {
+    if (condition) {
+      this.setState((prevState) => {
+        return { ...prevState, [stateKey]: false };
+      });
+      return false;
+    } else {
+      this.setState((prevState) => {
+        return { ...prevState, [stateKey]: true };
+      });
+      return true;
+    }
+  };
+
+  validationAll = (): boolean => {
+    const name = (this.inputName.current as HTMLInputElement).value;
+    const date = (this.inputDate.current as HTMLInputElement).value;
+    const inputAvatar = this.inputFile.current as HTMLInputElement;
+    const agree = this.checkbox.current!;
+    const select = this.select.current!;
+
+    let isValid = true;
+    isValid = this.isValidComponent(!agree?.checked, 'agree') && isValid;
+    isValid = this.isValidComponent(select.value === '', 'country') && isValid;
+    isValid = this.isValidComponent(name.trim().length < 3, 'name') && isValid;
+    const dataValue = new Date(date);
+    const currentDay = new Date();
+    isValid = this.isValidComponent(!date || dataValue > currentDay, 'date') && isValid;
+    isValid =
+      this.isValidComponent(!!inputAvatar.files && !inputAvatar.files.length, 'file') && isValid;
+    return isValid;
+  };
+
   addCard(newCard: ICardForForm) {
     this.setState({
-      formData: this.state.formData.concat(newCard),
+      formCards: this.state.formCards.concat(newCard),
     });
   }
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    this.setState({ firstChangeForm: true });
+
+    if (!this.validationAll()) {
+      this.setState({ isDisabled: true });
+      return;
+    }
     this.addCard({
       name: this.inputName.current?.value,
       date: this.inputDate.current?.value,
       country: this.select.current?.value,
-      urlImage: URL.createObjectURL(this.inputImg.current?.files?.[0] as Blob),
-      isRight: this.checkboxTwo.current?.value,
+      file: URL.createObjectURL(this.inputFile.current?.files?.[0] as Blob),
+      isRight: this.checkboxTwo.current?.checked ? 'да' : 'нет',
     });
     this.resetForm();
-  }
-  resetForm() {
-    this.form.current?.reset();
-    this.disableButton();
   }
   render() {
     return (
@@ -98,41 +170,42 @@ class Forms extends Component<IProps, FormState> {
               type="text"
               placeholder="Enter name..."
               ref={this.inputName}
-              onChange={this.inputHandler}
-              minLength={3}
-              onInvalid={this.handleError}
+              onChange={this.onChangeHandler}
               data-testid="input-name"
-              required
+              name="name"
             />
+            <p className="form-text__error">{this.state.name ? '' : this.formErrors.name}</p>
           </label>
           <label className="label" htmlFor="input-date">
             <div>Date: *</div>
-
             <input
               id="input-date"
               type="date"
               ref={this.inputDate}
-              onChange={this.inputHandler}
-              onInvalid={this.handleError}
+              onChange={this.onChangeHandler}
               data-testid="input-data"
-              required
+              name="date"
             />
+            <p className="form-text__error">{this.state.date ? '' : this.formErrors.date}</p>
           </label>
           <label className="label" htmlFor="select-countries">
             <div>Select countries: *</div>
             <select
-              name="countries"
+              name="country"
               id="select-countries"
               ref={this.select}
-              onChange={this.inputHandler}
-              onInvalid={this.handleError}
               data-testid="input-select"
-              required
+              defaultValue={''}
+              onChange={this.onChangeHandler}
             >
+              <option value="" disabled>
+                Выберите страну
+              </option>
               <option value="USA">USA</option>
               <option value="CHINA">CHINA</option>
               <option value="MEXICO">MEXICO</option>
             </select>
+            <p className="form-text__error">{this.state.country ? '' : this.formErrors.country}</p>
           </label>
           <label className="label" htmlFor="input-file">
             {' '}
@@ -140,30 +213,29 @@ class Forms extends Component<IProps, FormState> {
             <input
               type="file"
               id="input-file"
-              ref={this.inputImg}
-              onChange={this.inputHandler}
-              required
-              onInvalid={this.handleError}
+              ref={this.inputFile}
+              onChange={this.onChangeHandler}
               data-testid="input-file"
-            />
+              name="file"
+            />{' '}
+            <p className="form-text__error">{this.state.file ? '' : this.formErrors.file}</p>
           </label>
           <div>Согласен получать уведомления</div>
           <label className="checkbox-green">
             <input type="checkbox" ref={this.checkboxTwo} data-testid="input-radio" />
-            <span className="checkbox-green-switch" data-label-on="On" data-label-off="Off"></span>
+            <span className="checkbox-green-switch" data-label-on="да" data-label-off="нет"></span>
           </label>
-
           <label className="label" htmlFor="input-checkbox">
             <div>Согласен на обработку данных *</div>
             <input
               type="checkbox"
               id="input-checkbox"
               ref={this.checkbox}
-              onChange={this.inputHandler}
-              onInvalid={this.handleError}
               data-testid="input-agreement"
-              required
+              onChange={this.onChangeHandler}
+              name="agree"
             />
+            <p className="form-text__error">{this.state.agree ? '' : this.formErrors.agree}</p>
           </label>
           <input
             type="submit"
@@ -173,13 +245,13 @@ class Forms extends Component<IProps, FormState> {
           />
         </form>
         <div className="form-container__card">
-          {this.state.formData.map((card, index) => (
+          {this.state.formCards.map((card, index) => (
             <CardForForm
               key={index}
               name={card.name}
               date={card.date}
               country={card.country}
-              urlImage={card.urlImage}
+              file={card.file}
               isRight={card.isRight}
             />
           ))}

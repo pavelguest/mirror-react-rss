@@ -10,7 +10,7 @@ describe('card', () => {
         name={'pavel'}
         date={'12-12-2012'}
         country={'usa'}
-        urlImage={'eeqwewqeqwe'}
+        file={'eeqwewqeqwe'}
         isRight={'он'}
       />
     );

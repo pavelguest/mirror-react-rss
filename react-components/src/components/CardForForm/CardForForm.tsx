@@ -4,7 +4,7 @@ import './CardForForm.css';
 
 const CardForForm = (props: ICardForForm) => (
   <div className="card-form">
-    <img className="card-form__image" src={props.urlImage} alt="image" />
+    <img className="card-form__image" src={props.file} alt="image" />
     <div>{props.name}</div>
     <div>{props.date}</div>
     <div>{props.country}</div>

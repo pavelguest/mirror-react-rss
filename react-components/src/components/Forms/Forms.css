@@ -54,7 +54,11 @@
   height: 20px;
   border: 1px solid #030303;
 }
-
+.form-text__error {
+  height: 14px;
+  font-size: 14px;
+  color: red;
+}
 
 .checkbox-green {
   position: relative;
