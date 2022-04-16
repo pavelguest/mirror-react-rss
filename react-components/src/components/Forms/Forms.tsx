@@ -69,12 +69,21 @@ class Forms extends Component<IProps, FormState> {
     };
   }
   resetForm() {
-    this.form.current?.reset();
-    this.setState({ isDisabled: true });
+    // this.form.current?.reset();
+    this.inputName.current!.value = '';
+    this.inputDate.current!.value = '';
+    this.inputFile.current!.value = '';
+    this.checkbox.current!.checked = false;
+    this.checkboxTwo.current!.checked = false;
+    this.select.current!.value = '';
+
+    this.setState({ isDisabled: true, firstChangeForm: true });
   }
   onChangeHandler = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
   ) => {
+    console.log(`change`, this.state);
+
     const name = e.target.name as StateKeys;
     this.setState((prevState) => {
       return { ...prevState, [name]: true };
@@ -86,6 +95,8 @@ class Forms extends Component<IProps, FormState> {
   };
 
   enableButton = () => {
+    console.log(`enable button`, this.state);
+
     if (
       this.state.country &&
       this.state.agree &&
@@ -139,7 +150,7 @@ class Forms extends Component<IProps, FormState> {
   }
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    this.setState({ firstChangeForm: true });
+    // this.setState({ firstChangeForm: true });
 
     if (!this.validationAll()) {
       this.setState({ isDisabled: true });
@@ -208,7 +219,6 @@ class Forms extends Component<IProps, FormState> {
             <p className="form-text__error">{this.state.country ? '' : this.formErrors.country}</p>
           </label>
           <label className="label" htmlFor="input-file">
-            {' '}
             *
             <input
               type="file"
@@ -217,7 +227,7 @@ class Forms extends Component<IProps, FormState> {
               onChange={this.onChangeHandler}
               data-testid="input-file"
               name="file"
-            />{' '}
+            />
             <p className="form-text__error">{this.state.file ? '' : this.formErrors.file}</p>
           </label>
           <div>Согласен получать уведомления</div>
