@@ -1,108 +1,91 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../components/Card';
 import SearchBar from '../../components/SearchBar';
 import { ICArdMovie } from '../../components/Card/Card';
 import './HomePage.css';
 import Preload from '../../components/Preload';
 import CardForApi from '../../components/CardForApi';
-import { ModifierFlags } from 'typescript';
 import axios from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IPropsPage {}
-interface IState {
-  filterMovies: ICArdMovie[] | [];
-  searchBarValue: string;
-  loading: boolean;
-  modalWindow: boolean;
-  currentMovie: ICArdMovie;
-}
+const API_KEY = '73d7d196-9251-4b18-bfa4-0dfcf85206c2';
 
-class HomePage extends Component<IPropsPage, IState> {
-  apiKey: string;
-  constructor(props: IPropsPage) {
-    super(props);
-    this.apiKey = '73d7d196-9251-4b18-bfa4-0dfcf85206c2';
-    this.state = {
-      filterMovies: [],
-      searchBarValue: localStorage.getItem('searchValue') || '',
-      loading: false,
-      modalWindow: false,
-      currentMovie: {},
-    };
-  }
-  async getData() {
-    this.setState({ loading: true });
+const HomePage = () => {
+  const [filterMovies, setFilterMovies] = useState<ICArdMovie[] | []>([]);
+  const [searchValue, setSearchValue] = useState(localStorage.getItem('searchValue') || '');
+  const [isLoadData, setIsLoadData] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [currentMovie, setCurrentMovie] = useState<ICArdMovie>({});
+
+  const getData = async () => {
+    setIsLoadData(true);
     const response = await axios.get(
-      `https://kinopoiskapiunofficial.tech/api/v2.2/films/?type=FILM&ratingFrom=0&ratingTo=10&yearFrom=2000&yearTo=3000&keyword=${this.state.searchBarValue}`,
+      `https://kinopoiskapiunofficial.tech/api/v2.2/films/?type=FILM&ratingFrom=0&ratingTo=10&yearFrom=2000&yearTo=3000&keyword=${searchValue}`,
       {
-        headers: { 'X-API-KEY': `${this.apiKey}`, 'Content-Type': 'application/json' },
+        headers: { 'X-API-KEY': `${API_KEY}`, 'Content-Type': 'application/json' },
       }
     );
     try {
       const data = await response.data;
-      this.setState({ filterMovies: [...data.items], loading: false });
+      setIsLoadData(false);
+      setFilterMovies([...data.items]);
     } catch {
       console.log('error');
     }
-  }
-  changeInputValue(value: string) {
-    const searchValue = value;
-    this.setState({ searchBarValue: searchValue });
-  }
-
-  componentWillUnmount() {
-    localStorage.setItem('searchValue', this.state.searchBarValue);
-  }
-  closeWindow() {
-    this.setState({ modalWindow: false });
-  }
-  render() {
-    return (
-      <>
-        <SearchBar
-          searchBarValue={this.state.searchBarValue}
-          changeInputValue={(value: string) => {
-            this.changeInputValue.bind(this)(value);
-          }}
-          getData={this.getData.bind(this)}
-        />
-        <div className="Cards" data-testid="test">
-          {this.state.loading ? (
-            <Preload />
-          ) : (
-            this.state.filterMovies &&
-            this.state.filterMovies.map((movie, index) => (
-              <Card
-                key={index}
-                countries={movie.countries}
-                genres={movie.genres}
-                imdbId={movie.imdbId}
-                kinopoiskId={movie.kinopoiskId}
-                nameEn={movie.nameEn}
-                nameOriginal={movie.nameOriginal}
-                nameRu={movie.nameRu}
-                posterUrl={movie.posterUrl}
-                posterUrlPreview={movie.posterUrlPreview}
-                ratingImdb={movie.ratingImdb}
-                ratingKinopoisk={movie.ratingKinopoisk}
-                type={movie.type}
-                year={movie.year}
-                openCard={() => {
-                  this.setState({ currentMovie: { ...movie }, modalWindow: true });
-                }}
-              />
-            ))
-          )}
-        </div>
-        <CardForApi
-          modalWindow={this.state.modalWindow}
-          currentMovie={this.state.currentMovie}
-          closeWindow={() => this.closeWindow()}
-        />
-      </>
-    );
-  }
-}
+  };
+  const changeInputValue = (value: string) => {
+    setSearchValue(value);
+  };
+  const closeWindow = () => {
+    setIsOpenModal(false);
+  };
+  useEffect(() => {
+    localStorage.setItem('searchValue', searchValue);
+  }, [searchValue]);
+  return (
+    <>
+      <SearchBar
+        searchBarValue={searchValue}
+        changeInputValue={(value: string) => {
+          changeInputValue.bind(this)(value);
+        }}
+        getData={getData.bind(this)}
+      />
+      <div className="Cards" data-testid="test">
+        {isLoadData ? (
+          <Preload />
+        ) : (
+          filterMovies &&
+          filterMovies.map((movie, index) => (
+            <Card
+              key={index}
+              countries={movie.countries}
+              genres={movie.genres}
+              imdbId={movie.imdbId}
+              kinopoiskId={movie.kinopoiskId}
+              nameEn={movie.nameEn}
+              nameOriginal={movie.nameOriginal}
+              nameRu={movie.nameRu}
+              posterUrl={movie.posterUrl}
+              posterUrlPreview={movie.posterUrlPreview}
+              ratingImdb={movie.ratingImdb}
+              ratingKinopoisk={movie.ratingKinopoisk}
+              type={movie.type}
+              year={movie.year}
+              openCard={() => {
+                setCurrentMovie({ ...movie });
+                setIsOpenModal(true);
+              }}
+            />
+          ))
+        )}
+      </div>
+      <CardForApi
+        modalWindow={isOpenModal}
+        currentMovie={currentMovie}
+        closeWindow={() => closeWindow()}
+      />
+    </>
+  );
+};
 
 export { HomePage };
