@@ -8,7 +8,7 @@ const CardForForm = (props: ICardForForm) => (
     <div>{props.name}</div>
     <div>{props.date}</div>
     <div>{props.country}</div>
-    <div>{props.isRight}</div>
+    <div>{props.agree}</div>
   </div>
 );
 

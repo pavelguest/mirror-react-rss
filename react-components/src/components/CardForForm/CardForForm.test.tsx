@@ -11,7 +11,7 @@ describe('card', () => {
         date={'12-12-2012'}
         country={'usa'}
         file={'eeqwewqeqwe'}
-        isRight={'он'}
+        agree={'он'}
       />
     );
     screen.debug();
