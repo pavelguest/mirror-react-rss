@@ -5,9 +5,7 @@ import { ICArdMovie } from '../../components/Card/Card';
 import './HomePage.css';
 import Preload from '../../components/Preload';
 import CardForApi from '../../components/CardForApi';
-import axios from 'axios';
-
-const API_KEY = '73d7d196-9251-4b18-bfa4-0dfcf85206c2';
+import { getData } from '../../services/kinopoiskServices';
 
 const HomePage = () => {
   const [filterMovies, setFilterMovies] = useState<ICArdMovie[] | []>([]);
@@ -15,21 +13,16 @@ const HomePage = () => {
   const [isLoadData, setIsLoadData] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [currentMovie, setCurrentMovie] = useState<ICArdMovie>({});
+  const [errorMovies, setErrorMovies] = useState('');
 
-  const getData = async () => {
+  const getMovies = async () => {
     setIsLoadData(true);
-    const response = await axios.get(
-      `https://kinopoiskapiunofficial.tech/api/v2.2/films/?type=FILM&ratingFrom=0&ratingTo=10&yearFrom=2000&yearTo=3000&keyword=${searchValue}`,
-      {
-        headers: { 'X-API-KEY': `${API_KEY}`, 'Content-Type': 'application/json' },
-      }
-    );
-    try {
-      const data = await response.data;
-      setIsLoadData(false);
+    const data = await getData(searchValue);
+    setIsLoadData(false);
+    if (data?.message) {
+      setErrorMovies(data.message);
+    } else {
       setFilterMovies([...data.items]);
-    } catch {
-      console.log('error');
     }
   };
   const changeInputValue = (value: string) => {
@@ -48,11 +41,13 @@ const HomePage = () => {
         changeInputValue={(value: string) => {
           changeInputValue.bind(this)(value);
         }}
-        getData={getData.bind(this)}
+        getData={getMovies}
       />
       <div className="Cards" data-testid="test">
         {isLoadData ? (
           <Preload />
+        ) : errorMovies ? (
+          <div>{errorMovies}</div>
         ) : (
           filterMovies &&
           filterMovies.map((movie, index) => (
