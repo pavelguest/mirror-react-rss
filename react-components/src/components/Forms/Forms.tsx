@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { AppContext } from '../../context';
+import { Types } from '../../reducers';
 import CardForForm from '../CardForForm';
 import './Forms.css';
 export interface ICardForForm {
@@ -31,8 +33,7 @@ const Forms = () => {
     formState: { errors },
   } = useForm<ICardForForm>({ defaultValues: defaultValuesInputs });
 
-  const [formCards, setFormCards] = useState<ICardForForm[] | []>([]);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const { state, dispatch } = useContext(AppContext);
 
   const formErrors = {
     name: 'Поле `Имя` должно быть больше 3-ех букв',
@@ -47,11 +48,16 @@ const Forms = () => {
   ) => {
     const name = e.target.name as StateKeys;
     clearErrors(name);
-    setIsDisabled(false);
+    dispatch({ type: Types.enableSubmit });
   };
 
   const isDisabledSubmitBtn = () =>
-    isDisabled || errors.agree || errors.name || errors.date || errors.file || errors.country
+    state.formPage.isDisabledSubmit ||
+    errors.agree ||
+    errors.name ||
+    errors.date ||
+    errors.file ||
+    errors.country
       ? true
       : false;
   const onSubmit: SubmitHandler<ICardForForm> = (data: ICardForForm) => {
@@ -62,8 +68,8 @@ const Forms = () => {
       file: URL.createObjectURL(data.file[0] as unknown as Blob),
       agree: data.agreeNotification ? 'да' : 'нет',
     };
-    setFormCards([...formCards, dateCard]);
-    setIsDisabled(true);
+    dispatch({ type: Types.formCards, payload: dateCard });
+    dispatch({ type: Types.disableSubmit });
     reset(defaultValuesInputs);
   };
 
@@ -149,7 +155,7 @@ const Forms = () => {
         />
       </form>
       <div className="form-container__card">
-        {formCards.map((card, index) => (
+        {state.formPage.formCards.map((card, index) => (
           <CardForForm
             key={index}
             name={card.name}

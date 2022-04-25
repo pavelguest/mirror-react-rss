@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Card from '../../components/Card';
 import SearchBar from '../../components/SearchBar';
 import { ICArdMovie } from '../../components/Card/Card';
@@ -6,38 +6,37 @@ import './HomePage.css';
 import Preload from '../../components/Preload';
 import CardForApi from '../../components/CardForApi';
 import { getData } from '../../services/kinopoiskServices';
+import { AppContext } from '../../context';
+import { Types } from '../../reducers';
 
 const HomePage = () => {
-  const [filterMovies, setFilterMovies] = useState<ICArdMovie[] | []>([]);
-  const [searchValue, setSearchValue] = useState(localStorage.getItem('searchValue') || '');
   const [isLoadData, setIsLoadData] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [currentMovie, setCurrentMovie] = useState<ICArdMovie>({});
   const [errorMovies, setErrorMovies] = useState('');
 
+  const { state, dispatch } = useContext(AppContext);
+
   const getMovies = async () => {
     setIsLoadData(true);
-    const data = await getData(searchValue);
+    const data = await getData(state.homePage.searchInput);
     setIsLoadData(false);
     if (data?.message) {
       setErrorMovies(data.message);
     } else {
-      setFilterMovies([...data.items]);
+      dispatch({ type: Types.movieCards, payload: [...data.items] });
     }
   };
   const changeInputValue = (value: string) => {
-    setSearchValue(value);
+    dispatch({ type: Types.movieSearch, payload: value });
   };
   const closeWindow = () => {
     setIsOpenModal(false);
   };
-  useEffect(() => {
-    localStorage.setItem('searchValue', searchValue);
-  }, [searchValue]);
   return (
     <>
       <SearchBar
-        searchBarValue={searchValue}
+        searchBarValue={state.homePage.searchInput}
         changeInputValue={(value: string) => {
           changeInputValue.bind(this)(value);
         }}
@@ -49,8 +48,8 @@ const HomePage = () => {
         ) : errorMovies ? (
           <div>{errorMovies}</div>
         ) : (
-          filterMovies &&
-          filterMovies.map((movie, index) => (
+          state.homePage.movies &&
+          state.homePage.movies.map((movie, index) => (
             <Card
               key={index}
               countries={movie.countries}

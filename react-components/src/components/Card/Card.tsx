@@ -1,11 +1,10 @@
 import React from 'react';
-import CardForApi from '../CardForApi';
 import './Card.css';
 
-interface IMovieCountries {
+export interface IMovieCountries {
   country: string;
 }
-interface IMovieGenres {
+export interface IMovieGenres {
   genre: string;
 }
 export interface ICArdMovie {
