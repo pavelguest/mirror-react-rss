@@ -1,9 +1,14 @@
 import { ICardForForm } from './components/Forms/Forms';
-import { IFormInput, IFormPage, IHomePage, IMovieCards } from './context';
+import { IFormInput, IFormPage, IHomePage, IMovieCards, SortType } from './context';
 
 enum Types {
   movieCards = 'MOVIE_CARDS',
   movieSearch = 'SEARCH_VALUE',
+  movieSort = 'MOVIE_SORT',
+  movieTotalPages = 'MOVIE_TOTAL_PAGES',
+  prevPage = 'PREV_PAGE',
+  nextPage = 'NEXT_PAGE',
+  resetPage = 'RESET_PAGE',
   formCards = 'FORM_CARDS',
   formInputs = 'CHANGE_FORM_VALUES',
   disableSubmit = 'DISABLE_SUBMIT_BUTTON',
@@ -15,7 +20,12 @@ export type HomePageActions =
       type: Types.movieCards;
       payload: IMovieCards[];
     }
-  | { type: Types.movieSearch; payload: string };
+  | { type: Types.movieSearch; payload: string }
+  | { type: Types.movieSort; payload: string }
+  | { type: Types.movieTotalPages; payload: number }
+  | { type: Types.prevPage }
+  | { type: Types.nextPage }
+  | { type: Types.resetPage };
 
 const moviesReducer = (state: IHomePage, action: HomePageActions) => {
   switch (action.type) {
@@ -23,6 +33,16 @@ const moviesReducer = (state: IHomePage, action: HomePageActions) => {
       return { ...state, movies: action.payload };
     case Types.movieSearch:
       return { ...state, searchInput: action.payload };
+    case Types.movieSort:
+      return { ...state, sort: action.payload };
+    case Types.movieTotalPages:
+      return { ...state, pages: action.payload };
+    case Types.prevPage:
+      return { ...state, page: state.page - 1 };
+    case Types.nextPage:
+      return { ...state, page: state.page + 1 };
+    case Types.resetPage:
+      return { ...state, page: 1 };
     default:
       return state;
   }

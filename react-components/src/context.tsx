@@ -22,6 +22,9 @@ export interface IMovieCards {
 export interface IHomePage {
   movies: IMovieCards[];
   searchInput: string;
+  page: number;
+  pages: number;
+  sort: string;
 }
 
 export enum CountryEnum {
@@ -29,14 +32,19 @@ export enum CountryEnum {
   china = 'CHINA',
   mexico = 'MEXICO',
 }
+export enum SortType {
+  rating = 'RATING',
+  vote = 'NUM_VOTE',
+  year = 'YEAR',
+}
 
 export interface IFormInput {
   name: string;
   date: string;
   country: string;
   file: string;
-  agree: boolean;
-  agreeNotification: boolean;
+  agree: string;
+  agreeNotification: string;
 }
 
 export interface IFormPage {
@@ -57,14 +65,17 @@ const initialState: IInitialState = {
       date: '',
       country: '',
       file: '',
-      agree: false,
-      agreeNotification: false,
+      agree: '',
+      agreeNotification: '',
     },
     isDisabledSubmit: true,
   },
   homePage: {
     movies: [],
     searchInput: '',
+    page: 1,
+    pages: 0,
+    sort: SortType.rating,
   },
 };
 const AppContext = createContext<{

@@ -1,0 +1,19 @@
+.home-page__inputs,
+.Cards__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 20px;
+}
+#sort-select {
+  width: 100px;
+  padding: 7px;
+  font-size: 16px;
+  box-shadow: 1px 1px 10px 1px #000a;
+}
+#prev-page,
+#next-page {
+  padding: 10px;
+  font-size: 16px;
+  box-shadow: 1px 1px 10px 1px #000a;
+}

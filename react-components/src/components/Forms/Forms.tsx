@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AppContext } from '../../context';
 import { Types } from '../../reducers';
@@ -25,15 +25,26 @@ const defaultValuesInputs = {
 };
 
 const Forms = () => {
+  const { state, dispatch } = useContext(AppContext);
+  const formState = state.formPage.form;
+
   const {
     register,
     handleSubmit,
     reset,
     clearErrors,
+    getValues,
     formState: { errors },
-  } = useForm<ICardForForm>({ defaultValues: defaultValuesInputs });
-
-  const { state, dispatch } = useContext(AppContext);
+  } = useForm<ICardForForm>({
+    defaultValues: {
+      name: formState.name,
+      date: formState.date,
+      file: formState.file,
+      country: formState.country,
+      agree: formState.agree,
+      agreeNotification: formState.agreeNotification,
+    },
+  });
 
   const formErrors = {
     name: 'Поле `Имя` должно быть больше 3-ех букв',
@@ -43,12 +54,29 @@ const Forms = () => {
     agree: 'Нужно согласие',
   };
 
+  useEffect(() => {
+    return () => {
+      const { name, date, country, agree, agreeNotification } = getValues();
+      dispatch({
+        type: Types.formInputs,
+        payload: {
+          name,
+          date,
+          country,
+          file: '',
+          agree,
+          agreeNotification: agreeNotification ? agreeNotification : '',
+        },
+      });
+    };
+  }, [dispatch, getValues]);
+
   const onChangeHandler = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
   ) => {
     const name = e.target.name as StateKeys;
-    clearErrors(name);
     dispatch({ type: Types.enableSubmit });
+    clearErrors(name);
   };
 
   const isDisabledSubmitBtn = () =>
