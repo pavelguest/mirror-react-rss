@@ -1,20 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Card from '../../components/Card';
 import SearchBar from '../../components/SearchBar';
-import { ICArdMovie } from '../../components/Card/Card';
 import './HomePage.css';
 import Preload from '../../components/Preload';
-import CardForApi from '../../components/CardForApi';
 import { getData } from '../../services/kinopoiskServices';
 import { AppContext } from '../../context';
 import { Types } from '../../reducers';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [isLoadData, setIsLoadData] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [currentMovie, setCurrentMovie] = useState<ICArdMovie>({});
   const [errorMovies, setErrorMovies] = useState('');
 
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(AppContext);
 
   const getMovies = async () => {
@@ -49,9 +47,7 @@ const HomePage = () => {
   useEffect(() => {
     getMovies();
   }, [state.homePage.sort, state.homePage.page]);
-  const closeWindow = () => {
-    setIsOpenModal(false);
-  };
+
   return (
     <>
       <div className="home-page__inputs">
@@ -105,18 +101,13 @@ const HomePage = () => {
               type={movie.type}
               year={movie.year}
               openCard={() => {
-                setCurrentMovie({ ...movie });
-                setIsOpenModal(true);
+                dispatch({ type: Types.currentMovie, payload: { ...movie } });
+                navigate(`../card-info`);
               }}
             />
           ))
         )}
       </div>
-      <CardForApi
-        modalWindow={isOpenModal}
-        currentMovie={currentMovie}
-        closeWindow={() => closeWindow()}
-      />
     </>
   );
 };

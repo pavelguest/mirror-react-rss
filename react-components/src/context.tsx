@@ -1,5 +1,5 @@
 import React, { createContext, Dispatch, useReducer } from 'react';
-import { IMovieCountries, IMovieGenres } from './components/Card/Card';
+import { ICArdMovie, IMovieCountries, IMovieGenres } from './components/Card/Card';
 import { ICardForForm } from './components/Forms/Forms';
 import { FormPageActions, formReducer, HomePageActions, moviesReducer } from './reducers';
 
@@ -21,6 +21,7 @@ export interface IMovieCards {
 
 export interface IHomePage {
   movies: IMovieCards[];
+  currentMovie: ICArdMovie;
   searchInput: string;
   page: number;
   pages: number;
@@ -72,6 +73,7 @@ const initialState: IInitialState = {
   },
   homePage: {
     movies: [],
+    currentMovie: {},
     searchInput: '',
     page: 1,
     pages: 0,

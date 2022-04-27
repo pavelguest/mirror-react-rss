@@ -1,27 +1,11 @@
-.card-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.685);
-}
-.active-card {
-  display: flex;
-}
 .card-wrapper {
   position: relative;
   display: flex;
-  width: 80%;
-  height: 80%;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 2px 2px 20px 2px #000a;
 
   gap: 20px;
+}
+.card-modal__img {
+  height: 80vh;
 }
 .card-modal__info {
   display: flex;
