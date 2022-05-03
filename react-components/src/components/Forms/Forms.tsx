@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AppContext } from '../../context';
-import { Types } from '../../reducers';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { formSlice } from '../../redux/reducers/formSlice';
 import CardForForm from '../CardForForm';
 import './Forms.css';
 export interface ICardForForm {
@@ -25,8 +25,10 @@ const defaultValuesInputs = {
 };
 
 const Forms = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const formState = state.formPage.form;
+  const { formPage } = useAppSelector((state) => state.formReducer);
+  const { setFormCard, setFormInputs, setIsButtonSubmit } = formSlice.actions;
+  const dispatch = useAppDispatch();
+  const formState = formPage.form;
 
   const {
     register,
@@ -57,17 +59,15 @@ const Forms = () => {
   useEffect(() => {
     return () => {
       const { name, date, country, agree, agreeNotification } = getValues();
-      dispatch({
-        type: Types.formInputs,
-        payload: {
-          name,
-          date,
-          country,
-          file: '',
-          agree,
-          agreeNotification: agreeNotification ? agreeNotification : '',
-        },
-      });
+      const formInputsObj = {
+        name,
+        date,
+        country,
+        file: '',
+        agree,
+        agreeNotification: agreeNotification ? agreeNotification : '',
+      };
+      dispatch(setFormInputs(formInputsObj));
     };
   }, [dispatch, getValues]);
 
@@ -75,12 +75,12 @@ const Forms = () => {
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
   ) => {
     const name = e.target.name as StateKeys;
-    dispatch({ type: Types.enableSubmit });
+    dispatch(setIsButtonSubmit(false));
     clearErrors(name);
   };
 
   const isDisabledSubmitBtn = () =>
-    state.formPage.isDisabledSubmit ||
+    formPage.isDisabledSubmit ||
     errors.agree ||
     errors.name ||
     errors.date ||
@@ -96,8 +96,8 @@ const Forms = () => {
       file: URL.createObjectURL(data.file[0] as unknown as Blob),
       agree: data.agreeNotification ? 'да' : 'нет',
     };
-    dispatch({ type: Types.formCards, payload: dateCard });
-    dispatch({ type: Types.disableSubmit });
+    dispatch(setFormCard(dateCard));
+    dispatch(setIsButtonSubmit(true));
     reset(defaultValuesInputs);
   };
 
@@ -183,7 +183,7 @@ const Forms = () => {
         />
       </form>
       <div className="form-container__card">
-        {state.formPage.formCards.map((card, index) => (
+        {formPage.formCards.map((card, index) => (
           <CardForForm
             key={index}
             name={card.name}

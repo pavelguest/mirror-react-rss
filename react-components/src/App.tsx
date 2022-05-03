@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
 import './App.css';
 import AboutUsPage from './pages/AboutUsPage';
@@ -6,10 +6,10 @@ import NotFoundPage from './pages/NotFoundPage';
 import HomePage from './pages/HomePage';
 import FormPage from './pages/FormPage';
 import CardForApi from './components/CardForApi';
-import { AppContext } from './context';
+import { useAppSelector } from './hooks/redux';
 
 const App = () => {
-  const { state } = useContext(AppContext);
+  const { homePage } = useAppSelector((state) => state.homeReducer);
   return (
     <>
       <div className="App">
@@ -46,7 +46,7 @@ const App = () => {
             <Route path="/404" element={<NotFoundPage />} />
             <Route
               path="/card-info"
-              element={<CardForApi currentMovie={state.homePage.currentMovie} />}
+              element={<CardForApi currentMovie={homePage.currentMovie} />}
             />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

@@ -1,58 +1,64 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../components/Card';
 import SearchBar from '../../components/SearchBar';
 import './HomePage.css';
 import Preload from '../../components/Preload';
 import { getData } from '../../services/kinopoiskServices';
-import { AppContext } from '../../context';
-import { Types } from '../../reducers';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { moviesSlice } from '../../redux/reducers/moviesSlice';
 
 const HomePage = () => {
   const [isLoadData, setIsLoadData] = useState(false);
   const [errorMovies, setErrorMovies] = useState('');
 
-  const navigate = useNavigate();
-  const { state, dispatch } = useContext(AppContext);
+  const { homePage } = useAppSelector((state) => state.homeReducer);
+  const {
+    getMovieCards,
+    getTotalPages,
+    getMovieSearch,
+    setCurrentMovie,
+    resetPage,
+    setNextPage,
+    setPrevPage,
+    movieSort,
+  } = moviesSlice.actions;
+  const dispatch = useAppDispatch();
 
   const getMovies = async () => {
     setIsLoadData(true);
-    const data = await getData(
-      state.homePage.searchInput,
-      state.homePage.page,
-      state.homePage.sort
-    );
+    const data = await getData(homePage.searchInput, homePage.page, homePage.sort);
     setIsLoadData(false);
     if (data?.message) {
       setErrorMovies(data.message);
     } else {
-      dispatch({ type: Types.movieCards, payload: [...data.items] });
-      dispatch({ type: Types.movieTotalPages, payload: data.totalPages });
+      dispatch(getMovieCards([...data.items]));
+      dispatch(getTotalPages(data.totalPages));
     }
   };
   const changeInputValue = (value: string) => {
-    dispatch({ type: Types.movieSearch, payload: value });
-    dispatch({ type: Types.resetPage });
+    dispatch(getMovieSearch(value));
+    dispatch(resetPage());
   };
   const prevPage = () => {
-    if (state.homePage.page !== 1) dispatch({ type: Types.prevPage });
+    if (homePage.page !== 1) dispatch(setPrevPage());
   };
 
   const nextPage = () => {
-    if (state.homePage.page < state.homePage.pages) dispatch({ type: Types.nextPage });
+    if (homePage.page < homePage.pages) dispatch(setNextPage());
   };
   const changeSort = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: Types.movieSort, payload: e.target.value });
+    dispatch(movieSort(e.target.value));
   };
   useEffect(() => {
     getMovies();
-  }, [state.homePage.sort, state.homePage.page]);
+  }, [homePage.sort, homePage.page]);
 
   return (
     <>
       <div className="home-page__inputs">
         <SearchBar
-          searchBarValue={state.homePage.searchInput}
+          searchBarValue={homePage.searchInput}
           changeInputValue={(value: string) => {
             changeInputValue.bind(this)(value);
           }}
@@ -71,7 +77,7 @@ const HomePage = () => {
           prev
         </button>
         <span>
-          {state.homePage.page} / {state.homePage.pages}
+          {homePage.page} / {homePage.pages}
         </span>
         <button onClick={nextPage} id="next-page">
           next
@@ -83,28 +89,30 @@ const HomePage = () => {
         ) : errorMovies ? (
           <div>{errorMovies}</div>
         ) : (
-          state.homePage.movies &&
-          state.homePage.movies.map((movie, index) => (
-            <Card
-              key={index}
-              countries={movie.countries}
-              genres={movie.genres}
-              imdbId={movie.imdbId}
-              kinopoiskId={movie.kinopoiskId}
-              nameEn={movie.nameEn}
-              nameOriginal={movie.nameOriginal}
-              nameRu={movie.nameRu}
-              posterUrl={movie.posterUrl}
-              posterUrlPreview={movie.posterUrlPreview}
-              ratingImdb={movie.ratingImdb}
-              ratingKinopoisk={movie.ratingKinopoisk}
-              type={movie.type}
-              year={movie.year}
-              openCard={() => {
-                dispatch({ type: Types.currentMovie, payload: { ...movie } });
-                navigate(`../card-info`);
-              }}
-            />
+          homePage.movies &&
+          homePage.movies.map((movie, index) => (
+            <Link to={'../card-info'} key={index}>
+              {' '}
+              <Card
+                key={index}
+                countries={movie.countries}
+                genres={movie.genres}
+                imdbId={movie.imdbId}
+                kinopoiskId={movie.kinopoiskId}
+                nameEn={movie.nameEn}
+                nameOriginal={movie.nameOriginal}
+                nameRu={movie.nameRu}
+                posterUrl={movie.posterUrl}
+                posterUrlPreview={movie.posterUrlPreview}
+                ratingImdb={movie.ratingImdb}
+                ratingKinopoisk={movie.ratingKinopoisk}
+                type={movie.type}
+                year={movie.year}
+                openCard={() => {
+                  dispatch(setCurrentMovie(movie));
+                }}
+              />
+            </Link>
           ))
         )}
       </div>
