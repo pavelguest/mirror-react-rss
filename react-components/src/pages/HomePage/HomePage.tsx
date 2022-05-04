@@ -1,40 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Card from '../../components/Card';
 import SearchBar from '../../components/SearchBar';
 import './HomePage.css';
 import Preload from '../../components/Preload';
-import { getData } from '../../services/kinopoiskServices';
+import { fetchMovies } from '../../services/kinopoiskServices';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { moviesSlice } from '../../redux/reducers/moviesSlice';
 
 const HomePage = () => {
-  const [isLoadData, setIsLoadData] = useState(false);
-  const [errorMovies, setErrorMovies] = useState('');
-
   const { homePage } = useAppSelector((state) => state.homeReducer);
-  const {
-    getMovieCards,
-    getTotalPages,
-    getMovieSearch,
-    setCurrentMovie,
-    resetPage,
-    setNextPage,
-    setPrevPage,
-    movieSort,
-  } = moviesSlice.actions;
+  const { getMovieSearch, setCurrentMovie, resetPage, setNextPage, setPrevPage, movieSort } =
+    moviesSlice.actions;
   const dispatch = useAppDispatch();
 
   const getMovies = async () => {
-    setIsLoadData(true);
-    const data = await getData(homePage.searchInput, homePage.page, homePage.sort);
-    setIsLoadData(false);
-    if (data?.message) {
-      setErrorMovies(data.message);
-    } else {
-      dispatch(getMovieCards([...data.items]));
-      dispatch(getTotalPages(data.totalPages));
-    }
+    dispatch(
+      fetchMovies({ page: homePage.page, sort: homePage.sort, searchInput: homePage.searchInput })
+    );
   };
   const changeInputValue = (value: string) => {
     dispatch(getMovieSearch(value));
@@ -84,10 +67,10 @@ const HomePage = () => {
         </button>
       </div>
       <div className="Cards" data-testid="test">
-        {isLoadData ? (
+        {homePage.statusApi.isLoading ? (
           <Preload />
-        ) : errorMovies ? (
-          <div>{errorMovies}</div>
+        ) : homePage.statusApi.error ? (
+          <div>{homePage.statusApi.error}</div>
         ) : (
           homePage.movies &&
           homePage.movies.map((movie, index) => (

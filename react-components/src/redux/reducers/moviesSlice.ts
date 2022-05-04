@@ -1,38 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ICArdMovie, IMovieCountries, IMovieGenres } from '../../components/Card/Card';
+import { ICArdMovie } from '../../components/Card/Card';
+import { fetchMovies } from '../../services/kinopoiskServices';
+import { IGetDataApi, IInitialState, SortType } from '../../types/moviesSliceTypes';
 
-export interface IMovieCards {
-  countries: IMovieCountries[];
-  genres: IMovieGenres[];
-  imdbId: string;
-  kinopoiskId: number;
-  nameEn: null | string;
-  nameOriginal: null | string;
-  nameRu: null | string;
-  posterUrl: string;
-  posterUrlPreview: string;
-  ratingImdb: number | null;
-  ratingKinopoisk: number | null;
-  type: string;
-  year: number;
-}
-export enum SortType {
-  rating = 'RATING',
-  vote = 'NUM_VOTE',
-  year = 'YEAR',
-}
-
-export interface IHomePage {
-  movies: IMovieCards[];
-  currentMovie: ICArdMovie;
-  searchInput: string;
-  page: number;
-  pages: number;
-  sort: string;
-}
-export interface IInitialState {
-  homePage: IHomePage;
-}
 const initialState: IInitialState = {
   homePage: {
     movies: [],
@@ -41,6 +11,10 @@ const initialState: IInitialState = {
     page: 1,
     pages: 0,
     sort: SortType.rating,
+    statusApi: {
+      isLoading: false,
+      error: '',
+    },
   },
 };
 
@@ -48,12 +22,6 @@ export const moviesSlice = createSlice({
   name: 'Movies',
   initialState,
   reducers: {
-    getMovieCards(state, action: PayloadAction<IMovieCards[]>) {
-      state.homePage.movies = action.payload;
-    },
-    getTotalPages(state, action: PayloadAction<number>) {
-      state.homePage.pages = action.payload;
-    },
     getMovieSearch(state, action: PayloadAction<string>) {
       state.homePage.searchInput = action.payload;
     },
@@ -71,6 +39,21 @@ export const moviesSlice = createSlice({
     },
     setNextPage(state) {
       state.homePage.page += 1;
+    },
+  },
+  extraReducers: {
+    [fetchMovies.fulfilled.type]: (state, action: PayloadAction<IGetDataApi>) => {
+      state.homePage.statusApi.isLoading = false;
+      state.homePage.statusApi.error = '';
+      state.homePage.movies = action.payload.items;
+      state.homePage.pages = +action.payload.totalPages;
+    },
+    [fetchMovies.pending.type]: (state) => {
+      state.homePage.statusApi.isLoading = true;
+    },
+    [fetchMovies.rejected.type]: (state, action: PayloadAction<string>) => {
+      state.homePage.statusApi.isLoading = false;
+      state.homePage.statusApi.error = action.payload;
     },
   },
 });
